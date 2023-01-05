@@ -1,0 +1,424 @@
+*vim-buflist-popup.txt*
+                                                             *vim-buflist-popup*
+
+URL: https://github.com/stemoretti/vim-buflist-popup
+
+==============================================================================
+CONTENTS                                            *vim-buflist-popup-contents*
+
+    Introduction ........................... |vim-buflist-popup-introduction|
+    Usage .................................. |vim-buflist-popup-usage|
+    Options ................................ |vim-buflist-popup-options|
+    Commands ............................... |vim-buflist-popup-commands|
+    Mappings ............................... |vim-buflist-popup-mappings|
+    Functions .............................. |vim-buflist-popup-functions|
+    Configuration .......................... |vim-buflist-popup-configuration|
+
+==============================================================================
+INTRODUCTION                                    *vim-buflist-popup-introduction*
+
+Plugin to display the list of buffers currently open in a popup window
+in Vim or a floating window in Neovim.
+
+==============================================================================
+USAGE                                                  *vim-buflist-popup-usage*
+
+The default keybinding to show the list is `_` (underscore).
+It can be redefined by mapping a key to either |<Plug>(BuflistPopupShow)|
+or the command |:BuflistPopupShow|.
+
+The following information is shown for each buffer:
+    - index for quick selection
+    - `u` if the buffer is unlisted
+    - `%` or `#` if it's the current or alternate buffer, respectively
+    - `+` if the buffer is modified
+    - path
+
+You can switch directly to a buffer by typing its index number or you can
+move the cursor up and down the list using the keys `j/k` and then press
+`enter` to load the selected buffer in the current window.
+
+In the buffers list window, the key `_` (underscore) is, by default, configured
+to load the alternate buffer.
+
+==============================================================================
+OPTIONS                                              *vim-buflist-popup-options*
+
+g:buflist_popup_alternate_key                  *g:buflist_popup_alternate_key*
+    Type: |String|
+    Default: `'_'`
+
+    When the buffers list window is open, typing this key loads the alternate
+    buffer.
+
+g:buflist_popup_border                                *g:buflist_popup_border*
+    Type: |String| or |List|
+    Default: `'double'`
+
+    The border of the popup can be configured using this option.
+
+    If it's a |String|, the supported values for both Vim and Neovim are one
+    of: `'none'`, `'single'`, `'double'`, `'rounded'`, and `'solid'`.
+    Neovim additionally supports the value `'shadow'`.
+
+    If it's a |List|, its items specify the characters used to draw the
+    border. See the border argument of |nvim_open_win()| in Neovim
+    or the borderchars argument at |popup_create-arguments| in Vim for the
+    details.
+
+g:buflist_popup_exclude_names                  *g:buflist_popup_exclude_names*
+    Type: |List|
+    Default: `['Buflist_Popup']`
+
+    With this option it's possible to exclude buffers from being shown.
+
+    The |List| items are regular expressions of buffer names to be matched.
+    The buffers whose name matches will be excluded from the view.
+
+g:buflist_popup_index_from_1                    *g:buflist_popup_index_from_1*
+    Type: |Number|
+    Default: `0`
+
+    When this option is set to `1`, the indexing of buffers will start from 1.
+
+g:buflist_popup_mappings                            *g:buflist_popup_mappings*
+    Type: |List|
+    Default: `[]`
+
+    The |List| items are key mappings to execute commands.
+
+    Each item must be a |Dictionary| containing the keys `key` and `exec`.
+    The value of `key` is the key that when typed will execute the command
+    defined by the value of `exec`.
+
+    Example: >
+        let g:buflist_popup_mappings = [
+            \ #{key: 's', exec: ':call SaveBuffer()'}
+            \ #{key: 'S', exec: ':call SaveAllModifiedBuffers()'}
+            \ #{key: 'd', exec: ':call DeleteBuffer()'}
+            \ ]
+<
+NOTE: In Neovim a key can be a sequence of characters while in Vim a key can
+    only be a single character.
+
+NOTE: In Neovim it's also possible to map keys using autocommands. See
+    the |vim-buflist-popup-configuration| section below for more information.
+
+g:buflist_popup_move_to_index                  *g:buflist_popup_move_to_index*
+    Type: |Number|
+    Default: `0`
+
+    When this option is set to `1`, instead of loading the buffer, typing the
+    index number of a buffer will move the cursor to it.
+
+g:buflist_popup_relative_path                  *g:buflist_popup_relative_path*
+    Type: |Number|
+    Default: `1`
+
+    If this option is set to `0`, the full path will be displayed.
+    By default, paths are relative to the current directory.
+
+g:buflist_popup_reverse_order                  *g:buflist_popup_reverse_order*
+    Type: |Number|
+    Default: `0`
+
+    If this option is set to `1`, the buffers order will be reversed.
+
+g:buflist_popup_shorten_path                    *g:buflist_popup_shorten_path*
+    Type: |Number|
+    Default: `0`
+
+    Shorten directories' names in the path. The value is the number of letters
+    the directories' names should be reduced to.
+
+g:buflist_popup_show_noname                      *g:buflist_popup_show_noname*
+    Type: |Number|
+    Default: `0`
+
+    When this option is set to `1`, unnamed buffers will be shown.
+
+g:buflist_popup_show_unlisted                  *g:buflist_popup_show_unlisted*
+    Type: |Number|
+    Default: `0`
+
+    When this option is set to `1`, unlisted buffers will be shown.
+
+g:buflist_popup_sort_method                      *g:buflist_popup_sort_method*
+    Type: |String|
+    Default: `'bufnr'`
+
+    Choose the way in which buffers are sorted.
+
+    The supported values are:
+        `'bufnr'`       Buffer number (bufnr).
+        `'ext'`         Filename extension. Then by filename.
+        `'path'`        Full path.
+        `'mru'`         Most recently used buffers first.
+        `'name'`        Filename. If equal, by full path.
+
+g:buflist_popup_split_path                        *g:buflist_popup_split_path*
+    Type: |Number|
+    Default: `0`
+
+    When this option is set to `1`, the filename will be displayed split from
+    the directory containing it.
+
+==============================================================================
+COMMANDS                                            *vim-buflist-popup-commands*
+
+:BuflistPopupShow                                          *:BuflistPopupShow*
+
+    Show the popup.
+
+:BuflistPopupClose                                        *:BuflistPopupClose*
+
+    Close the popup.
+
+:BuflistPopupSelect `{index}`                            *:BuflistPopupSelect*
+
+    Select the buffer at index `{index}` of the buffers list.
+
+:BuflistPopupUpdate                                      *:BuflistPopupUpdate*
+
+    Update the popup. This command just saves the cursor position index,
+    closes and reopens the popup and selects the index previously saved.
+
+==============================================================================
+MAPPINGS                                            *vim-buflist-popup-mappings*
+
+`_` (underscore)                                         *vim-buflist-popup-_*
+
+    Show the popup.
+
+The following is a plug mapping which can be remapped if you want to use a
+different mapping than the default one given above.
+
+<Plug>(BuflistPopupShow)                            *<Plug>(BuflistPopupShow)*
+
+==============================================================================
+FUNCTIONS                                          *vim-buflist-popup-functions*
+
+buflist_popup#list()                                    *buflist_popup#list()*
+
+    Get information of all the buffers as a |List| of |Dictionaries|.
+
+    The dictionaries have the following entries:
+        bufnr            Buffer number.
+        filename         File name (tail) of the file in the buffer.
+        lastused         Timestamp in seconds when the buffer was last used.
+        listed           |TRUE| if the buffer is listed.
+        modified         |TRUE| if the buffer is modified.
+        path             Full path to the file in the buffer.
+
+buflist_popup#size()                                    *buflist_popup#size()*
+
+    Get the buffers list size.
+
+buflist_popup#at(`{index}`)                               *buflist_popup#at()*
+
+    Get information about the buffer at `{index}` as a |Dictionary|.
+    See |buflist_popup#list()| above for the details about the |dict| entries.
+
+    Returns |FALSE| if `{index}` is out of range.
+
+buflist_popup#index_of(`{buf}`)                     *buflist_popup#index_of()*
+
+    Get the index of `{buf}`. If the `{buf}` argument is a |Number|, buffer
+    numbers are used. If the `{buf}` argument is a |String|, it must match a
+    buffer name exactly.
+
+    Returns `-1` if `{buf}` is not found.
+
+buflist_popup#alternate_bufnr()              *buflist_popup#alternate_bufnr()*
+
+    Get the alternate buffer number (bufnr).
+
+    Returns `-1` if there is only one buffer loaded.
+
+buflist_popup#get_current_index()          *buflist_popup#get_current_index()*
+
+    Get the index of the currently selected buffer.
+
+Neovim ~
+
+buflist_popup#nvim#buffer_handle()        *buflist_popup#nvim#buffer_handle()*
+
+    The buffer number (bufnr) of the floating window.
+
+buflist_popup#nvim#winid()                        *buflist_popup#nvim#winid()*
+
+    The floating window id.
+
+Vim ~
+
+buflist_popup#vim#winid()                          *buflist_popup#vim#winid()*
+
+    The window id of the popup.
+
+==============================================================================
+CONFIGURATION                                  *vim-buflist-popup-configuration*
+
+This plugin triggers custom autocommands defined using the User event
+BuflistPopup.
+
+Example: >
+    :autocmd User BuflistPopup echom 'got BuflistPopup event'
+
+The event can be used in Neovim to map keys.
+
+Example: >
+    autocmd User BuflistPopup
+        \ call nvim_buf_set_keymap(buflist_popup#nvim#buffer_handle(),
+            \ 'n', 's', ':call SaveBuffer()<CR>',
+            \ {'silent': v:true, 'nowait': v:true, 'noremap': v:true})
+
+Highlighting ~
+
+The User event can be used to customize the window colors.
+
+In Neovim the color of the text, the border and the cursorline can be
+configured as follows.
+
+Example for Neovim: >
+    autocmd User BuflistPopup
+        \ call nvim_win_set_option(buflist_popup#nvim#winid(),
+        \ 'winhighlight',
+        \ 'Normal:BuflistPopupNormal'
+        \ .. ',CursorLine:BuflistPopupSel'
+        \ .. ',FloatBorder:BuflistPopupBorder')
+
+(BuflistPopupNormal, BuflistPopupSel and BuflistPopupBorder are
+user defined |highlight-groups|.)
+
+In Vim the color of the text, the border, the scrollbar background and the
+scrollbar thumb can be configured in the following way.
+
+Example for Vim: >
+    autocmd User BuflistPopup
+        \ call popup_setoptions(buflist_popup#vim#winid(), {
+            \ 'borderhighlight': ['BuflistPopupBorder'],
+            \ 'highlight': 'BuflistPopupNormal',
+            \ 'scrollbarhighlight': 'BuflistPopupScrollbar',
+            \ 'thumbhighlight': 'BuflistPopupThumb',
+            \ })
+
+See |popup_create| for more details.
+
+Commands examples ~
+
+The next functions can be used to save or delete the currently selected buffer
+and to save all modified buffers.
+
+Example: >
+    function! SaveBuffer() abort
+        let buf_index = buflist_popup#get_current_index()
+        let buf_bufnr = buflist_popup#at(buf_index).bufnr
+        BuflistPopupClose
+        let curbuf = bufnr('%')
+        exec buf_bufnr .. ',' .. buf_bufnr .. 'bufdo :w'
+        exec curbuf .. 'b'
+        BuflistPopupShow
+        BuflistPopupSelect buf_index
+    endfunction
+
+    function! DeleteBuffer() abort
+        if buflist_popup#size() < 2 | return | endif
+        let bufnr = buflist_popup#at(buflist_popup#get_current_index()).bufnr
+        BuflistPopupClose
+        call <SID>KillBuffer(bufnr)
+        BuflistPopupShow
+        BuflistPopupSelect buf_index
+    endfunction
+
+    function SaveAllModifiedBuffers()
+        let buf_index = buflist_popup#get_current_index()
+        let buflist = buflist_popup#list()
+        BuflistPopupClose
+        let curbuf = bufnr('%')
+        for bufinfo in buflist
+            if bufinfo.modified
+                exec bufinfo.bufnr .. ',' .. bufinfo.bufnr .. 'bufdo :w'
+            endif
+        endfor
+        exec curbuf .. 'b'
+        BuflistPopupShow
+        BuflistPopupSelect buf_index
+    endfunction
+
+The following example is an implementation of the function KillBuffer() used
+in the function DeleteBuffer() above.
+It tries to handle various things (e.g. NERDTree plugin, modified buffer, etc)
+but you should customize it to your liking.
+
+Example: >
+    function! s:KillBuffer(buf) abort
+        let bufinfo = getbufinfo(a:buf)[0]
+        let nerdtree_isopen = exists("g:NERDTree") && g:NERDTree.IsOpen()
+
+        " don't delete unlisted buffer as they may be help files
+        if !bufinfo.listed
+            let open_windows = len(getwininfo())
+            if open_windows > 2 || (open_windows == 2 && !nerdtree_isopen)
+                close
+            else if bufnr() == a:buf
+                bprevious
+            endif
+            return
+        endif
+
+        if len(getbufinfo({ 'buflisted': 1 })) == 1
+            echohl ErrorMsg | echo "Cannot kill the only buffer!" | echohl None
+            return
+        endif
+
+        if bufinfo.changed
+            let ans = confirm("Save changes?", "&Yes\n&No\n&Cancel", 3, "Q")
+            let buffer_name = bufname(a:buf)
+            if ans == 1
+                if empty(buffer_name)
+                    let filename = input("Enter filename: ")
+                    if empty(filename)
+                        return
+                    else
+                        exec "write" filename
+                    endif
+                else
+                    write
+                endif
+                mode
+                echo "Buffer '" . buffer_name . "' killed. Changes saved"
+            elseif ans == 2
+                mode
+                echo "Buffer '" . buffer_name . "' killed. Changes discarded"
+            else
+                mode
+                echo "Killing of buffer '" . buffer_name . "' canceled"
+                return
+            endif
+        endif
+
+        " if the buffer is shown in multiple windows, close them all
+        while len(win_findbuf(a:buf)) > 1
+            close
+            call win_gotoid(win_findbuf(a:buf)[0])
+        endwhile
+
+        if bufnr() == a:buf && len(getwininfo()) == 2 && nerdtree_isopen
+            bprevious
+        endif
+
+        exec "bdelete!" a:buf
+    endfunction
+
+The following function can be used to open the currently selected buffer
+in a new window. It should be called with either `":split"` or `":vsplit"` as
+argument to split the window horizontally or vertically, respectively.
+
+Example: >
+    function! OpenBuffer(position) abort
+        BuflistPopupClose
+        exec a:position
+        exec "b" buflist_popup#at(buflist_popup#get_current_index()).bufnr
+    endfunction
+
+vim: tw=78
