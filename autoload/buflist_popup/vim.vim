@@ -47,8 +47,6 @@ function! buflist_popup#vim#show() abort
 
     let index = buflist_popup#index_of(bufnr('%'))
     call buflist_popup#vim#select(index >= 0 ? index : 0)
-
-    call buflist_popup#internal#reset_numeric_sequence()
 endfunction
 
 " Function: #close {{{1
