@@ -5,12 +5,13 @@ scriptencoding utf-8
 let s:save_cpo = &cpoptions
 set cpoptions&vim
 
-let s:border_chars = #{
-    \ single: ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
-    \ rounded: ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
-    \ solid: [' '],
-    \ }
 let s:winid = 0
+
+let s:border_chars = #{
+    \ rounded: ['─', '│', '─', '│', '╭', '╮', '╯', '╰'],
+    \ single:  ['─', '│', '─', '│', '┌', '┐', '┘', '└'],
+    \ solid:   [' '],
+    \ }
 
 " Function: #show {{{1
 function! buflist_popup#vim#show() abort

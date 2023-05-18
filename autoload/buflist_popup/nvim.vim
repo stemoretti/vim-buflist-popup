@@ -8,11 +8,10 @@ let s:buffer_handle = nvim_create_buf(v:false, v:true)
 call nvim_buf_set_name(s:buffer_handle, 'Buflist_Popup')
 
 let s:index_keymaps = []
-
 for index in range(10)
     call add(s:index_keymaps, #{
         \ key: string(index),
-        \ exec: ':call <SID>close_switch_or_move_to_input_number(' .. index .. ')'
+        \ exec: ':call <SID>close_switch_or_move_to_input_number(' .. index .. ')',
         \ })
 endfor
 
