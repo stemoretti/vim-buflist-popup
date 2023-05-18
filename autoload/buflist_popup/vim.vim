@@ -17,6 +17,9 @@ let s:border_chars = #{
 function! buflist_popup#vim#show() abort
     if s:winid || !buflist_popup#internal#init() | return | endif
 
+    let buflines = buflist_popup#internal#formatted_output()
+    let buflines_widths = sort(map(copy(buflines), {_, v -> len(v)}), 'N')
+
     let opts = #{
         \ drag: 0,
         \ wrap: 0,
@@ -24,7 +27,8 @@ function! buflist_popup#vim#show() abort
         \ padding: [0, 0, 0, 0],
         \ filter: 's:key_filter',
         \ maxheight: &lines - 4,
-        \ maxwidth: &columns - 4
+        \ maxwidth: &columns - 4,
+        \ minwidth: buflines_widths[-1],
         \ }
 
     if type(g:buflist_popup_border) == v:t_list
@@ -35,7 +39,7 @@ function! buflist_popup#vim#show() abort
         let opts.borderchars = s:border_chars[g:buflist_popup_border]
     endif
 
-    let s:winid = popup_menu(buflist_popup#internal#formatted_output(), opts)
+    let s:winid = popup_menu(buflines, opts)
 
     if exists('#User#BuflistPopup')
         doautocmd <nomodeline> User BuflistPopup
