@@ -163,6 +163,14 @@ g:buflist_popup_split_path                        *g:buflist_popup_split_path*
     When this option is set to `1`, the filename will be displayed split from
     the directory containing it.
 
+g:buflist_popup_wrap_around                      *g:buflist_popup_wrap_around*
+    Type: |Number|
+    Default: `0`
+
+    When this option is set to `1`, allow the command `j/<C-n>/<Down>` (or
+    `k/<C-p>/<Up>`) to wrap around to the top (bottom) of the list when the
+    cursor is at the bottom (top).
+
 ==============================================================================
 COMMANDS                                            *vim-buflist-popup-commands*
 

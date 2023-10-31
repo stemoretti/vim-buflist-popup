@@ -19,6 +19,7 @@ let g:buflist_popup_show_noname   = get(g:, 'buflist_popup_show_noname', 1)
 let g:buflist_popup_show_unlisted = get(g:, 'buflist_popup_show_unlisted', 0)
 let g:buflist_popup_sort_method   = get(g:, 'buflist_popup_sort_method', 'bufnr')
 let g:buflist_popup_split_path    = get(g:, 'buflist_popup_split_path', 0)
+let g:buflist_popup_wrap_around   = get(g:, 'buflist_popup_wrap_around', 0)
 
 if has('nvim')
     nnoremap <silent> <Plug>(BuflistPopupShow) :call buflist_popup#nvim#show()<CR>

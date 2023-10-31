@@ -49,6 +49,17 @@ function! buflist_popup#nvim#show() abort
         \ #{key: '<CR>', exec: ':call <SID>close_switch_to_selected()'},
         \ ]
 
+    if g:buflist_popup_wrap_around
+        call extend(s:keymaps, [
+            \ #{key: 'j', exec: ':call <SID>go_down()'},
+            \ #{key: '<Down>', exec: ':call <SID>go_down()'},
+            \ #{key: '<C-n>', exec: ':call <SID>go_down()'},
+            \ #{key: 'k', exec: ':call <SID>go_up()'},
+            \ #{key: '<Up>', exec: ':call <SID>go_up()'},
+            \ #{key: '<C-p>', exec: ':call <SID>go_up()'},
+            \ ])
+    endif
+
     if !empty(g:buflist_popup_alternate_key)
         call add(s:keymaps, #{
             \ key: g:buflist_popup_alternate_key,
@@ -168,6 +179,20 @@ function! s:close_switch_to_selected() abort
         let pos = nvim_win_get_cursor(0)
         call s:close_switch_to_index(pos[0] - 1)
     endif
+endfunction
+
+" Function: s:go_down {{{1
+function! s:go_down() abort
+    let pos = nvim_win_get_cursor(0)
+    let pos[0] = (pos[0] == buflist_popup#size() ? 1 : pos[0] + 1)
+    call nvim_win_set_cursor(0, pos)
+endfunction
+
+" Function: s:go_up {{{1
+function! s:go_up() abort
+    let pos = nvim_win_get_cursor(0)
+    let pos[0] = (pos[0] == 1 ? buflist_popup#size() : pos[0] - 1)
+    call nvim_win_set_cursor(0, pos)
 endfunction
 "}}}
 

@@ -124,6 +124,12 @@ function! s:key_filter(winid, key) abort
             call s:close_switch_to(a:winid, buflist_popup#index_of(alt))
             return 1
         endif
+    elseif !g:buflist_popup_wrap_around
+        \ && (((a:key == 'k' || a:key == 'K' || a:key == "\<C-p>" || a:key == "\<Up>")
+        \ && getcurpos(a:winid)[1] == 1)
+        \ || ((a:key == 'j' || a:key == 'J' || a:key == "\<C-n>" || a:key == "\<Down>")
+        \ && getcurpos(a:winid)[1] == buflist_popup#size()))
+        return 1
     else
         for keymap in g:buflist_popup_mappings
             if a:key == keymap.key && !empty(keymap.exec)
