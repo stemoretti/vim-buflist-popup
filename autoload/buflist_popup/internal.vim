@@ -88,13 +88,7 @@ endfunction
 
 " Function: #set_index {{{1
 function! buflist_popup#internal#set_index(index) abort
-    let idx = a:index
-    if a:index < 0
-        let idx = 0
-    elseif a:index >= len(s:buflist)
-        let idx = len(s:buflist) - 1
-    endif
-    let s:current_index = idx
+    let s:current_index = max([0, min([a:index, len(s:buflist) - 1])])
 endfunction
 
 " Function: #get_index {{{1
@@ -205,11 +199,8 @@ endfunction
 " Function: s:cmp_name {{{1
 function! s:cmp_name(l, r) abort
     let Cmp = {x, y -> x ==? y ? 0 : (x >? y ? 1 : -1)}
-    if Cmp(a:l.filename, a:r.filename) == 0
-        return Cmp(a:l.path, a:r.path)
-    else
-        return Cmp(a:l.filename, a:r.filename)
-    endif
+    let cmp = Cmp(a:l.filename, a:r.filename)
+    return cmp == 0 ? Cmp(a:l.path, a:r.path) : cmp
 endfunction
 
 " Function: s:cmp_extension {{{1
